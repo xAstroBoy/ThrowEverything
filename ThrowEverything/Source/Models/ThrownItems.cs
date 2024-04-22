@@ -78,7 +78,7 @@ namespace ThrowEverything.Models
                 {
                     int damage = (int)Math.Round(markiplier * 10);
                     Plugin.Logger.LogInfo($"hitting something else {damage}");
-                    hittable.Hit(damage, item.transform.forward, thrownItem.GetThrower(), true);
+                    hittable.Hit(damage, item.transform.forward, thrownItem.GetThrower(), true, -1);
                 }
 
                 if (hit.collider.TryGetComponent(out EnemyAI enemyAI))
