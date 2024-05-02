@@ -58,9 +58,13 @@ namespace ThrowEverything.Patches
                 Throwable throwable = State.GetHeldThrowable();
                 if (throwable != null)
                 {
+
                     GrabbableObject item = throwable.GetItem();
+                    if (item != null)
+                    {
+                        State.SetHeldThrowable(item);
+                    }
                     State.ClearHeldThrowable();
-                    State.SetHeldThrowable(item);
                 }
             }
         }
