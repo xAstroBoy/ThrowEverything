@@ -93,10 +93,10 @@ namespace ThrowEverything.Models
             Throwable throwable = State.GetHeldThrowable();
             ChargingThrow chargingThrow = State.GetChargingThrow();
             GrabbableObject item = throwable.GetItem();
-
-            float m = Utils.ItemScale(item);
+            PlayerControllerB thrower = throwable.GetThrower() ?? GameNetworkManager.Instance.localPlayerController;
+            float m = item == null ? (float)1 : Utils.ItemScale(item);
             preview.transform.localScale = new Vector3(m, m, m);
-            preview.transform.position = Utils.GetItemThrowDestination(item, throwable.GetThrower(), chargingThrow.GetChargeDecimal());
+            preview.transform.position = Utils.GetItemThrowDestination(item, thrower, chargingThrow.GetChargeDecimal());
         }
     }
 }

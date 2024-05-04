@@ -13,8 +13,11 @@ namespace ThrowEverything
 
         internal static void SetHeldThrowable(GrabbableObject item)
         {
-            heldThrowable = new(item, item.playerHeldBy); // just in case it changes somehow
-            heldThrowable.HookEvents();
+            if (item != null && item.playerHeldBy != null)
+            {
+                heldThrowable = new(item, item.playerHeldBy); // just in case it changes somehow
+                heldThrowable.HookEvents();
+            }
         }
 
         internal static void ClearHeldThrowable()
