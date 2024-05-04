@@ -18,7 +18,7 @@ namespace ThrowEverything
 
         internal static float ItemWeight(GrabbableObject item)
         {
-            if (item == null) return 1;
+            if (item == null) return 0;
             float ow = item.itemProperties.weight;
             float t = item.itemProperties.twoHanded ? 2 : 1;
             float w = Math.Clamp((ow - 1) * t, 0, 1);
