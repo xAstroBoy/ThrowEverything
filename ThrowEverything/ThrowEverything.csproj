@@ -4,11 +4,11 @@
     <TargetFramework>netstandard2.1</TargetFramework>
     <AssemblyName>Spantle.ThrowEverything</AssemblyName>
     <Description>Adds a new ability to throw (almost) any item in Lethal Company. Throw items to deal damage, distract enemies, trigger landmines, and more!</Description>
-    <Version>0.4.1</Version>
+    <Version>0.5.0</Version>
     <AllowUnsafeBlocks>False</AllowUnsafeBlocks>
     <LangVersion>latest</LangVersion>
     <Product>ThrowEverything</Product>
-    <Authors>Spantle</Authors>
+    <Authors>Spantle , xAstroBoy</Authors>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -33,24 +33,31 @@
   <ItemGroup>
     <Reference Include="Assembly-CSharp">
       <HintPath>D:\SteamLibrary\steamapps\common\Lethal Company\Lethal Company_Data\Managed\Assembly-CSharp.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="LethalCompanyInputUtils">
       <HintPath>C:\Users\xAstroBoy\AppData\Roaming\r2modmanPlus-local\LethalCompany\cache\Rune580-LethalCompany_InputUtils\0.7.4\plugins\LethalCompanyInputUtils\LethalCompanyInputUtils.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="Unity.InputSystem">
       <HintPath>D:\SteamLibrary\steamapps\common\Lethal Company\Lethal Company_Data\Managed\Unity.InputSystem.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="Unity.Netcode.Components">
       <HintPath>D:\SteamLibrary\steamapps\common\Lethal Company\Lethal Company_Data\Managed\Unity.Netcode.Components.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="Unity.Netcode.Runtime">
       <HintPath>D:\SteamLibrary\steamapps\common\Lethal Company\Lethal Company_Data\Managed\Unity.Netcode.Runtime.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="Unity.TextMeshPro">
       <HintPath>D:\SteamLibrary\steamapps\common\Lethal Company\Lethal Company_Data\Managed\Unity.TextMeshPro.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine">
       <HintPath>D:\SteamLibrary\steamapps\common\Lethal Company\Lethal Company_Data\Managed\UnityEngine.dll</HintPath>
+      <Private>False</Private>
     </Reference>
   </ItemGroup>
 </Project>
