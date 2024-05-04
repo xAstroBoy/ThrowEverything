@@ -42,7 +42,6 @@ namespace ThrowEverything.Models
 
             if (Utils.LocalPlayer == null || HeldItem() == null)
             {
-                Plugin.Logger.LogWarning($"tried to throw an invalid item {HeldItem() == null}");
                 State.ClearHeldThrowable();
                 return;
             }

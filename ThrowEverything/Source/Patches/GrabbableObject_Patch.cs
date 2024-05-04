@@ -30,6 +30,7 @@ namespace ThrowEverything.Patches
             if (__instance.IsOwner)
             {
                 Plugin.Logger.LogInfo($"pocketed {Utils.Name(__instance)}");
+                State.ClearHeldThrowable();
             }
         }
 
@@ -40,6 +41,7 @@ namespace ThrowEverything.Patches
             if (__instance.IsOwner)
             {
                 Plugin.Logger.LogInfo($"discarded {Utils.Name(__instance)}");
+                State.ClearHeldThrowable();
             }
         }
 

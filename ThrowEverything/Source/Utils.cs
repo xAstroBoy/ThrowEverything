@@ -9,24 +9,25 @@ namespace ThrowEverything
 {
     internal static class Utils
     {
-        internal static string Name(GrabbableObject __instance)
+        internal static string Name(GrabbableObject item)
         {
-            if (__instance == null) return "NULL";
-            if (__instance.itemProperties == null) return $"{__instance.name} (props was NULL)";
-            return __instance.itemProperties.name;
+            if (item == null) return "NULL";
+            if (item.itemProperties == null) return $"{item.name} (props was NULL)";
+            return item.itemProperties.name;
         }
 
-        internal static float ItemWeight(GrabbableObject __instance)
+        internal static float ItemWeight(GrabbableObject item)
         {
-            float ow = __instance.itemProperties.weight;
-            float t = __instance.itemProperties.twoHanded ? 2 : 1;
+            if (item == null) return 1;
+            float ow = item.itemProperties.weight;
+            float t = item.itemProperties.twoHanded ? 2 : 1;
             float w = Math.Clamp((ow - 1) * t, 0, 1);
             return w;
         }
 
-        internal static float ItemPower(GrabbableObject __instance, float powerDecimal, bool inverse = false)
+        internal static float ItemPower(GrabbableObject item, float powerDecimal, bool inverse = false)
         {
-            float w = ItemWeight(__instance);
+            float w = ItemWeight(item);
             float v;
             if (inverse) v = (1 - w) * (1 - w);
             else v = w * w;
@@ -35,9 +36,9 @@ namespace ThrowEverything
             return v * powerDecimal;
         }
 
-        internal static float ItemScale(GrabbableObject __instance)
+        internal static float ItemScale(GrabbableObject item)
         {
-            return Math.Clamp(__instance.transform.localScale.magnitude, 0.2f, 3);
+            return Math.Clamp(item.transform.localScale.magnitude, 0.2f, 3);
         }
 
         internal static void DamagePlayer(PlayerControllerB player, int damage, Vector3 hitDirection, PlayerControllerB damager)

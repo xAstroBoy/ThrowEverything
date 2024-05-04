@@ -37,8 +37,8 @@ namespace ThrowEverything.Models
             isCharging = false;
             hasRunOutOfStamina = false;
             hasFullyCharged = false;
+            if(preview != null) UnityEngine.Object.Destroy(preview);
 
-            UnityEngine.Object.Destroy(preview);
         }
 
         internal void Exhausted()
