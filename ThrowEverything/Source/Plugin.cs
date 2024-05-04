@@ -1,5 +1,6 @@
 ﻿using BepInEx;
 using HarmonyLib;
+using ThrowEverything.Models;
 using ThrowEverything.Patches;
 
 namespace ThrowEverything
@@ -19,6 +20,7 @@ namespace ThrowEverything
             harmony.PatchAll(typeof(GrabbableObject_Patch));
             harmony.PatchAll(typeof(HUDManager_Patch));
             harmony.PatchAll(typeof(PlayerControllerB_Patch));
+            Throwable.HookEvents();
 
             if (InputSettings.Instance.Enabled)
             {

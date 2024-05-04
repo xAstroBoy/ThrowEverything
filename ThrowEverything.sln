@@ -5,6 +5,11 @@ VisualStudioVersion = 17.6.33712.159
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ThrowEverything", "ThrowEverything\ThrowEverything.csproj", "{AC140F47-3C49-47C4-AFB0-6087D13CDC20}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{60826E17-AA7F-4B84-97F3-FC4B9054185C}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

@@ -16,10 +16,7 @@ namespace ThrowEverything.Patches
         [HarmonyPatch(typeof(PlayerControllerB), "Update")]
         static void Update(PlayerControllerB __instance)
         {
-            if (StartOfRound.Instance.localPlayerController != __instance)
-            {
-                return;
-            }
+            if (!__instance.IsSelf()) return;
 
             ChargingThrow chargingThrow = State.GetChargingThrow();
             if (chargingThrow.isCharging)
@@ -47,25 +44,10 @@ namespace ThrowEverything.Patches
         [HarmonyPatch(typeof(PlayerControllerB), "ScrollMouse_performed")]
         static void ScrollMouse_performed(PlayerControllerB __instance)
         {
+            if (!__instance.IsSelf()) return;
             if (State.GetChargingThrow().isCharging)
             {
                 __instance.isGrabbingObjectAnimation = false; // put it back (hopefully to the way it was)
-            }
-
-            if (Utils.CanUseItem(__instance))
-            {
-                // even though switching items will probably run this, we do it just in case of a two handed item where you cannot switch items
-                Throwable throwable = State.GetHeldThrowable();
-                if (throwable != null)
-                {
-
-                    GrabbableObject item = throwable.GetItem();
-                    if (item != null)
-                    {
-                        State.SetHeldThrowable(item);
-                    }
-                    State.ClearHeldThrowable();
-                }
             }
         }
     }

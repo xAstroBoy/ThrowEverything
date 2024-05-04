@@ -10,45 +10,39 @@ namespace ThrowEverything.Models
 {
     internal class Throwable
     {
-        readonly GrabbableObject item;
-        readonly PlayerControllerB thrower;
 
-        internal Throwable(GrabbableObject item, PlayerControllerB thrower)
+
+
+        internal static GrabbableObject GetItem()
         {
-            this.item = item;
-            this.thrower = thrower;
+            return Utils.LocalPlayer.currentlyHeldObjectServer;
         }
 
-        internal GrabbableObject GetItem()
+        internal static void StartThrowing(CallbackContext ctx)
         {
-            return item;
-        }
-
-        internal PlayerControllerB GetThrower()
-        {
-            return thrower;
-        }
-
-        internal void StartThrowing(CallbackContext ctx)
-        {
-            if (!Utils.CanUseItem(thrower))
+            if (!Utils.CanUseItem(Utils.LocalPlayer))
             {
                 Plugin.Logger.LogInfo("cannot use item");
                 return;
             }
 
-            thrower.isGrabbingObjectAnimation = true;
+            Utils.LocalPlayer.isGrabbingObjectAnimation = true;
 
             State.GetChargingThrow().StartCharging();
         }
 
-        internal void Throw(CallbackContext ctx)
+        internal static GrabbableObject HeldItem()
         {
-            thrower.isGrabbingObjectAnimation = false;
+            return Utils.LocalPlayer.currentlyHeldObjectServer;
+        }
 
-            if (item == null || item.playerHeldBy != thrower)
+        internal static void Throw(CallbackContext ctx)
+        {
+            Utils.LocalPlayer.isGrabbingObjectAnimation = false;
+
+            if (Utils.LocalPlayer == null || HeldItem() == null)
             {
-                Plugin.Logger.LogWarning($"tried to throw an invalid item {item == null}");
+                Plugin.Logger.LogWarning($"tried to throw an invalid item {HeldItem() == null}");
                 State.ClearHeldThrowable();
                 return;
             }
@@ -62,26 +56,17 @@ namespace ThrowEverything.Models
             }
 
             float chargeDecimal = chargingThrow.GetChargeDecimal();
-            float markiplier = Utils.ItemPower(item, chargeDecimal);
-            ThrownItem thrownItem = new(item, item.playerHeldBy, chargeDecimal, markiplier);
-            State.GetThrownItems().thrownItemsDict.Add(item.GetInstanceID(), thrownItem);
+            float markiplier = Utils.ItemPower(HeldItem(), chargeDecimal);
+            ThrownItem thrownItem = new(HeldItem(), HeldItem().playerHeldBy, chargeDecimal, markiplier);
+            State.GetThrownItems().thrownItemsDict.Add(HeldItem().GetInstanceID(), thrownItem);
 
-            item.playerHeldBy.DiscardHeldObject(placeObject: true, null, Utils.GetItemThrowDestination(thrownItem));
+            HeldItem().playerHeldBy.DiscardHeldObject(placeObject: true, null, Utils.GetItemThrowDestination(thrownItem));
         }
 
-        internal void HookEvents()
+        internal static void HookEvents()
         {
             InputSettings.Instance.ThrowItem.started += StartThrowing;
             InputSettings.Instance.ThrowItem.canceled += Throw;
-        }
-
-        internal void UnhookEvents()
-        {
-            InputSettings.Instance.ThrowItem.started -= StartThrowing;
-            InputSettings.Instance.ThrowItem.canceled -= Throw;
-
-            // just in case
-            thrower.isGrabbingObjectAnimation = false;
         }
     }
 }

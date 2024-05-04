@@ -10,6 +10,7 @@ namespace ThrowEverything
     {
         internal static void Set(GrabbableObject item)
         {
+            if (item == null) return;
             try
             {
                 ChargingThrow chargingThrow = State.GetChargingThrow();

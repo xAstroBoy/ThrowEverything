@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace ThrowEverything
 {
-    internal class Utils
+    internal static class Utils
     {
         internal static string Name(GrabbableObject __instance)
         {
@@ -127,5 +127,8 @@ namespace ThrowEverything
 
             return true;
         }
+        internal static PlayerControllerB LocalPlayer => GameNetworkManager.Instance.localPlayerController;
+
+        internal static bool IsSelf(this PlayerControllerB? player) => LocalPlayer is PlayerControllerB localPlayer && player?.actualClientId == localPlayer.actualClientId;
     }
 }

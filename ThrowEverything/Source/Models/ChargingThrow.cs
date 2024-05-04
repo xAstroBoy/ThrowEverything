@@ -65,7 +65,7 @@ namespace ThrowEverything.Models
 
         internal float GetChargeDecimal()
         {
-            float itemWeight = Utils.ItemWeight(State.GetHeldThrowable().GetItem());
+            float itemWeight = Utils.ItemWeight(Throwable.GetItem());
             float percentage = Math.Clamp(GetTime() / Math.Clamp((int)Math.Round(itemWeight * MAX_CHARGING_TIME), MIN_CHARGING_TIME, MAX_CHARGING_TIME), 0, 1);
 
             if (isCharging && percentage == 1)
@@ -88,15 +88,14 @@ namespace ThrowEverything.Models
                 preview = GameObject.CreatePrimitive(PrimitiveType.Sphere);
                 preview.layer = 6;
                 preview.GetComponent<Renderer>().material = ShipBuildModeManager.Instance.ghostObjectGreen;
+                preview.name = "Throw Previewer";
             }
 
-            Throwable throwable = State.GetHeldThrowable();
+            GrabbableObject item = Utils.LocalPlayer.currentlyHeldObjectServer;
             ChargingThrow chargingThrow = State.GetChargingThrow();
-            GrabbableObject item = throwable.GetItem();
-            PlayerControllerB thrower = throwable.GetThrower() ?? GameNetworkManager.Instance.localPlayerController;
-            float m = item == null ? (float)1 : Utils.ItemScale(item);
-            preview.transform.localScale = new Vector3(m, m, m);
-            preview.transform.position = Utils.GetItemThrowDestination(item, thrower, chargingThrow.GetChargeDecimal());
+            float Scale = item == null ? (float)1 : Utils.ItemScale(item);
+            preview.transform.localScale = new Vector3(Scale, Scale, Scale);
+            preview.transform.position = Utils.GetItemThrowDestination(item, Utils.LocalPlayer, chargingThrow.GetChargeDecimal());
         }
     }
 }
