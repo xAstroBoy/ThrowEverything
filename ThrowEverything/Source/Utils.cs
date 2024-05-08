@@ -153,7 +153,7 @@ namespace ThrowEverything
         internal static int DamageFromWeight(GrabbableObject item)
         {
             float weight = Utils.ItemWeight(item, false);
-            int damage = (int)((weight - Math.Truncate(weight)) * 10 / 2);
+            int damage = (int)((weight - Math.Truncate(weight)) * 10);
             if(damage == 0) damage = 1;
             return damage;
         }
