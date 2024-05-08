@@ -35,7 +35,7 @@ namespace ThrowEverything.Models
             }
 
             float size = Utils.ItemScale(item)* 2;
-            var colliders = item.transform.SphereCastForward(size, size + 25f, TargetedCollisions);
+            var colliders = item.transform.SphereCastFromCenter(size, 35f, TargetedCollisions);
             foreach (RaycastHit hit in colliders)
             {
                 string name = hit.collider.name;
@@ -77,7 +77,7 @@ namespace ThrowEverything.Models
                     }
                     else
                     {
-                        damage = Math.Clamp(Utils.DamageFromWeight(item), 1, 3);
+                        damage = 1;
                         markiplier = 1;
                     }
                     Plugin.Logger.LogInfo($"damaging a player {damage} ({hitPlayer.health}");
@@ -164,23 +164,23 @@ namespace ThrowEverything.Models
                 }
                 if (hit.transform.root.TryGetComponent(out EnemyAI enemyAI))
                 {
+                    float stunTime;
                     int damage;
                     if (!Plugin.IgnoreWeight)
                     {
                         damage = (int)Math.Round(markiplier * 10);
-
+                        stunTime = markiplier * 5;
                     }
                     else
                     {
                         damage = Utils.DamageFromWeight(item);
                         markiplier = 1;
+                        stunTime = damage * 5;
                     }
-                    float stunTime = markiplier * 5;
+                     
                     Plugin.Logger.LogInfo("Markiplier: " + markiplier);
                     Plugin.Logger.LogInfo($"stunning an enemy {stunTime} and Damaging with {damage} 's Force");
-                    enemyAI.HitEnemyServerRpc(damage, (int)Utils.LocalPlayer.actualClientId, true, -1);
                     enemyAI.SetEnemyStunned(true, stunTime);
-
                     if (enemyAI.isEnemyDead || enemyAI.enemyHP == 0)
                     {
                         Plugin.Logger.LogInfo("it killed it");

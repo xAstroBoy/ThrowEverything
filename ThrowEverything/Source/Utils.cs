@@ -153,49 +153,12 @@ namespace ThrowEverything
         internal static int DamageFromWeight(GrabbableObject item)
         {
             float weight = Utils.ItemWeight(item, false);
-            int damage = (int)((weight - Math.Truncate(weight)) * 10);
+            int damage = (int)((weight - Math.Truncate(weight)) * 10 / 0.5);
             if(damage == 0) damage = 1;
             return damage;
         }
 
-        internal static int SphereCastForward(this RaycastHit[] array, Transform transform, float sphereRadius = 1.0f, float maxDistance = 1.0f, LayerMask mask = default)
-        {
-            try
-            {
-                return Physics.SphereCastNonAlloc(
-                    transform.position + (transform.forward * (sphereRadius + 1.75f)),
-                    sphereRadius,
-                    transform.forward,
-                    array,
-                    maxDistance,
-                    mask
-                );
-            }
-
-            catch (NullReferenceException)
-            {
-                return 0;
-            }
-        }
-
-        internal static RaycastHit[] SphereCastForward(this Transform transform, float sphereRadius = 1.0f, float maxDistance = 1.0f, LayerMask mask = default)
-        {
-            try
-            {
-                return Physics.SphereCastAll(
-                    transform.position + (transform.forward * (sphereRadius + 1.75f)),
-                    sphereRadius,
-                    transform.forward,
-                    maxDistance,
-                    mask
-                );
-            }
-
-            catch (NullReferenceException)
-            {
-                return [];
-            }
-        }
+        
 
         /// <summary>
         /// This gets the GameObject path 
@@ -217,7 +180,25 @@ namespace ThrowEverything
                 return current.name;
             return GetPath(current.parent) + "/" + current.name;
         }
-
-
+        internal static RaycastHit[] SphereCastFromCenter(this Transform transform, float sphereRadius = 1.0f, float additionalRange = 25.0f, LayerMask mask = default)
+        {
+            try
+            {
+                Vector3 targetPosition = transform.position + transform.forward * additionalRange;
+                Vector3 throwDirection = (targetPosition - transform.position).normalized;
+                Vector3 center = transform.position;
+                return Physics.SphereCastAll(
+                    center,
+                    sphereRadius,
+                    throwDirection,
+                    additionalRange,
+                    mask
+                );
+            }
+            catch (NullReferenceException)
+            {
+                return new RaycastHit[0]; // return an empty array
+            }
+        }
     }
 }

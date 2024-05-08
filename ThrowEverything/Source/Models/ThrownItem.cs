@@ -14,7 +14,7 @@ namespace ThrowEverything.Models
         readonly float markiplier; // same here (markiplier = multiplier = power * charge)
         
         readonly DateTime thrownAt;
-        readonly HashSet<Collider> hits = new();
+        readonly HashSet<Collider> hits = [];
 
         internal ThrownItem(GrabbableObject item, PlayerControllerB thrower, float chargeDecimal, float markiplier)
         {
