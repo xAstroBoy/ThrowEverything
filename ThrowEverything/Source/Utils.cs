@@ -153,7 +153,7 @@ namespace ThrowEverything
         internal static int DamageFromWeight(GrabbableObject item)
         {
             float weight = Utils.ItemWeight(item, false);
-            int damage = (int)((weight - Math.Truncate(weight)) * 10 / 0.5);
+            int damage = (int)((weight - Math.Truncate(weight)) * 10 / 2);
             if(damage == 0) damage = 1;
             return damage;
         }
@@ -199,6 +199,14 @@ namespace ThrowEverything
             {
                 return new RaycastHit[0]; // return an empty array
             }
+        }
+
+        internal static bool HasAlreadyHit(this IHittable instance, ThrownItem item)
+        {
+            if(item == null) return false;
+            if(instance == null) return false;
+            return item.HasAlreadyHit(instance);
+
         }
     }
 }

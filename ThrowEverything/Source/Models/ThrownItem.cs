@@ -14,8 +14,8 @@ namespace ThrowEverything.Models
         readonly float markiplier; // same here (markiplier = multiplier = power * charge)
         
         readonly DateTime thrownAt;
-        readonly HashSet<Collider> hits = [];
-
+        readonly HashSet<Collider> ColliderHit = [];
+        readonly HashSet<IHittable> hittables = [];
         internal ThrownItem(GrabbableObject item, PlayerControllerB thrower, float chargeDecimal, float markiplier)
         {
             this.item = item;
@@ -46,16 +46,29 @@ namespace ThrowEverything.Models
             return chargeDecimal;
         }
 
-        internal bool CheckIfHitOrAdd(Collider hittable)
+        internal bool HasAlreadyHit(Collider hittable)
         {
-            bool hasHit = hits.Contains(hittable);
+            bool hasHit = ColliderHit.Contains(hittable);
             if (hasHit)
             {
                 return true;
             }
             else
             {
-                hits.Add(hittable);
+                ColliderHit.Add(hittable);
+                return false;
+            }
+        }
+        internal bool HasAlreadyHit(IHittable hittable)
+        {
+            bool hasHit = hittables.Contains(hittable);
+            if (hasHit)
+            {
+                return true;
+            }
+            else
+            {
+                hittables.Add(hittable);
                 return false;
             }
         }
@@ -71,7 +84,8 @@ namespace ThrowEverything.Models
             Plugin.Logger.LogInfo($"playing sound for {item.name} at markiplier {loudness}");
             RoundManager.Instance.PlayAudibleNoise(item.transform.position, Math.Clamp(loudness * 50, 8f, 50f), Math.Clamp(loudness, 0.5f, 1f), 0, item.isInElevator && StartOfRound.Instance.hangarDoorsClosed, 941);
             State.GetThrownItems().thrownItemsDict.Remove(item.GetInstanceID());
-            hits.Clear();
+            hittables.Clear();
+            ColliderHit.Clear();
         }
     }
 }
