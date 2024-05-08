@@ -29,5 +29,9 @@ namespace ThrowEverything
 
             Logger.LogInfo($"{PluginInfo.PLUGIN_GUID} is loaded!");
         }
+
+        internal static bool IgnoreWeight = true;
+
+        internal static bool IgnoreStamina = true;
     }
 }

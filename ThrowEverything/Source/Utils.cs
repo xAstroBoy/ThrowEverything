@@ -1,6 +1,7 @@
 ﻿using GameNetcodeStuff;
 using System;
 using System.Collections.Generic;
+using System.Net.Http.Headers;
 using System.Text;
 using ThrowEverything.Models;
 using UnityEngine;
@@ -9,6 +10,21 @@ namespace ThrowEverything
 {
     internal static class Utils
     {
+
+        internal static HashSet<LayerMask> LayerCollision = new HashSet<LayerMask>
+        {
+            Mask.Room,
+            Mask.Terrain,
+            Mask.ShipInterior,
+            Mask.Ship,
+            Mask.MiscLevelGeometry,
+            Mask.NavigationSurface,
+            Mask.Railing,
+            Mask.PlaceableShipObjects,
+        };
+
+        internal static LayerMask TargetedCollisions => LayerCollision.ToLayerMask();
+
         internal static string Name(GrabbableObject item)
         {
             if (item == null) return "NULL";
@@ -16,8 +32,9 @@ namespace ThrowEverything
             return item.itemProperties.name;
         }
 
-        internal static float ItemWeight(GrabbableObject item)
+        internal static float ItemWeight(GrabbableObject item, bool IgnoreWeight = false)
         {
+            if (IgnoreWeight) return 0;
             if (item == null) return 0;
             float ow = item.itemProperties.weight;
             float t = item.itemProperties.twoHanded ? 2 : 1;
@@ -25,9 +42,10 @@ namespace ThrowEverything
             return w;
         }
 
+
         internal static float ItemPower(GrabbableObject item, float powerDecimal, bool inverse = false)
         {
-            float w = ItemWeight(item);
+            float w = ItemWeight(item, Plugin.IgnoreWeight);
             float v;
             if (inverse) v = (1 - w) * (1 - w);
             else v = w * w;
@@ -54,15 +72,15 @@ namespace ThrowEverything
         internal static Vector3 FindLandingRay(Vector3 location, bool logging = false)
         {
             Ray landingRay = new(location, Vector3.down); // the ray of where the item will land (basically the location pointing down)
-            if (Physics.Raycast(landingRay, out RaycastHit hitInfo, 100f, StartOfRound.Instance.collidersAndRoomMaskAndDefault))
+            if (Physics.Raycast(landingRay, out RaycastHit hitInfo, 100f, TargetedCollisions))
             {
                 // if we collide with the floor then we return the collision spot elevated a bit
-                if (logging) Plugin.Logger.LogInfo("we hit the floor");
+                if (logging) Plugin.Logger.LogDebug("we hit the floor");
                 return hitInfo.point + Vector3.up * 0.05f;
             }
 
             // otherwise we return the destination straight down
-            if (logging) Plugin.Logger.LogInfo("we did not hit the floor");
+            if (logging) Plugin.Logger.LogDebug("we did not hit the floor");
             return landingRay.GetPoint(100f);
         }
 
@@ -72,22 +90,22 @@ namespace ThrowEverything
             RaycastHit hitInfo; // where the ray collides
             float itemDistance = ItemPower(item, chargeDecimal, true) * 20;
             float distance;
-            if (Physics.Raycast(throwRay, out hitInfo, itemDistance, StartOfRound.Instance.collidersAndRoomMaskAndDefault))
+            if (Physics.Raycast(throwRay, out hitInfo, itemDistance, TargetedCollisions))
             {
                 // if we collide with a surface then we make the destination the collision
-                Plugin.Logger.LogInfo("we hit a surface");
+                Plugin.Logger.LogDebug("we hit a surface");
                 distance = hitInfo.distance;
             }
             else
             {
                 // if we don't then we go the full length
-                Plugin.Logger.LogInfo("we did not hit a surface");
+                Plugin.Logger.LogDebug("we did not hit a surface");
                 distance = itemDistance;
-                
+
             }
 
             distance = Math.Max(0, distance - ItemScale(item) / 2); // we reduce the distance by the item's scale to avoid clipping into (or even through) surfaces
-            Plugin.Logger.LogInfo($"throwing {Name(item)} ({item.itemProperties.weight}): {distance} units ({itemDistance}, {ItemScale(item)})");
+            Plugin.Logger.LogDebug($"throwing {Name(item)} ({item.itemProperties.weight}): {distance} units ({itemDistance}, {ItemScale(item)})");
 
             Vector3 destination = throwRay.GetPoint(distance);
             return FindLandingRay(destination);
@@ -131,5 +149,75 @@ namespace ThrowEverything
         internal static PlayerControllerB LocalPlayer => GameNetworkManager.Instance.localPlayerController;
 
         internal static bool IsSelf(this PlayerControllerB? player) => LocalPlayer is PlayerControllerB localPlayer && player?.actualClientId == localPlayer.actualClientId;
+
+        internal static int DamageFromWeight(GrabbableObject item)
+        {
+            float weight = Utils.ItemWeight(item, false);
+            int damage = (int)((weight - Math.Truncate(weight)) * 10);
+            if(damage == 0) damage = 1;
+            return damage;
+        }
+
+        internal static int SphereCastForward(this RaycastHit[] array, Transform transform, float sphereRadius = 1.0f, float maxDistance = 1.0f, LayerMask mask = default)
+        {
+            try
+            {
+                return Physics.SphereCastNonAlloc(
+                    transform.position + (transform.forward * (sphereRadius + 1.75f)),
+                    sphereRadius,
+                    transform.forward,
+                    array,
+                    maxDistance,
+                    mask
+                );
+            }
+
+            catch (NullReferenceException)
+            {
+                return 0;
+            }
+        }
+
+        internal static RaycastHit[] SphereCastForward(this Transform transform, float sphereRadius = 1.0f, float maxDistance = 1.0f, LayerMask mask = default)
+        {
+            try
+            {
+                return Physics.SphereCastAll(
+                    transform.position + (transform.forward * (sphereRadius + 1.75f)),
+                    sphereRadius,
+                    transform.forward,
+                    maxDistance,
+                    mask
+                );
+            }
+
+            catch (NullReferenceException)
+            {
+                return [];
+            }
+        }
+
+        /// <summary>
+        /// This gets the GameObject path 
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <returns></returns>
+        internal static string GetPath(this GameObject obj)
+        {
+            return GetPath(obj.transform);
+        }
+        /// <summary>
+        /// This gets the Transform path
+        /// </summary>
+        /// <param name="current"></param>
+        /// <returns></returns>
+        internal static string GetPath(this Transform current)
+        {
+            if (current.parent == null)
+                return current.name;
+            return GetPath(current.parent) + "/" + current.name;
+        }
+
+
     }
 }

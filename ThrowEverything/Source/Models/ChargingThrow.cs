@@ -43,6 +43,7 @@ namespace ThrowEverything.Models
 
         internal void Exhausted()
         {
+            if (Plugin.IgnoreStamina) return;
             if (!hasRunOutOfStamina)
             {
                 hasRunOutOfStamina = true;
@@ -52,7 +53,7 @@ namespace ThrowEverything.Models
 
         private float GetTime()
         {
-            if (hasRunOutOfStamina)
+            if (hasRunOutOfStamina && !Plugin.IgnoreStamina)
             {
                 return (float)(runOutOfStaminaTime - startChargingTime).TotalMilliseconds;
             }
@@ -65,7 +66,7 @@ namespace ThrowEverything.Models
 
         internal float GetChargeDecimal()
         {
-            float itemWeight = Utils.ItemWeight(Throwable.GetItem());
+            float itemWeight = Utils.ItemWeight(Throwable.GetItem(), Plugin.IgnoreWeight);
             float percentage = Math.Clamp(GetTime() / Math.Clamp((int)Math.Round(itemWeight * MAX_CHARGING_TIME), MIN_CHARGING_TIME, MAX_CHARGING_TIME), 0, 1);
 
             if (isCharging && percentage == 1)
@@ -93,7 +94,7 @@ namespace ThrowEverything.Models
 
             GrabbableObject item = Utils.LocalPlayer.currentlyHeldObjectServer;
             ChargingThrow chargingThrow = State.GetChargingThrow();
-            float Scale = item == null ? (float)1 : Utils.ItemScale(item);
+            float Scale = item == null ? (float)0.2 : Utils.ItemScale(item);
             preview.transform.localScale = new Vector3(Scale, Scale, Scale);
             preview.transform.position = Utils.GetItemThrowDestination(item, Utils.LocalPlayer, chargingThrow.GetChargeDecimal());
         }

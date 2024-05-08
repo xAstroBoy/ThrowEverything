@@ -35,8 +35,15 @@ namespace ThrowEverything.Patches
 
             if (__instance.sprintMeter < 0.3f || __instance.isExhausted)
             {
-                __instance.isExhausted = true;
-                chargingThrow.Exhausted();
+                if (!Plugin.IgnoreStamina)
+                {
+                    __instance.isExhausted = true;
+                    chargingThrow.Exhausted();
+                }
+            }
+            else
+            {
+                chargingThrow.hasRunOutOfStamina = false;
             }
         }
 
