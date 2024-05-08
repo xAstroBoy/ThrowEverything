@@ -31,7 +31,7 @@ namespace ThrowEverything.Models
             }
 
             float size = Utils.ItemScale(item) * 2;
-            var colliders = item.transform.SphereCastFromCenter(size, 15f, TargetedCollisions);
+            var colliders = item.transform.SphereCastFromCenter(size, 10f, TargetedCollisions);
             foreach (RaycastHit hit in colliders)
             {
                 string name = hit.collider.name;
