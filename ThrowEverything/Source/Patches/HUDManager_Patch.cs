@@ -14,8 +14,14 @@ namespace ThrowEverything.Patches
         [HarmonyPatch(typeof(HUDManager), "Update")]
         static void Update(HUDManager __instance)
         {
-            if (Throwable.GetItem() is not GrabbableObject item) return; 
-            ControlTips.Set(item);
+            if (Throwable.GetItem() is not GrabbableObject item)
+            {
+                ControlTips.Clear();
+            }
+            else
+            {
+                ControlTips.Set(item);
+            }
         }
     }
 }

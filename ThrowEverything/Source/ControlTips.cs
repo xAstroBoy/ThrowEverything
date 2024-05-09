@@ -56,5 +56,18 @@ namespace ThrowEverything
                 Plugin.Logger.LogWarning(e);
             }
         }
+
+        internal static void Clear()
+        {
+            try
+            {
+                HUDManager.Instance.ChangeControlTipMultiple(default);
+            }
+            catch (Exception e)
+            {
+                Plugin.Logger.LogWarning($"failed to inject control tips");
+                Plugin.Logger.LogWarning(e);
+            }
+        }
     }
 }

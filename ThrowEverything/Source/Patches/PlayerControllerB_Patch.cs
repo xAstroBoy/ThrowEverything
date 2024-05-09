@@ -1,10 +1,6 @@
 ﻿using GameNetcodeStuff;
 using HarmonyLib;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using ThrowEverything.Models;
-using ThrowEverything.Patches;
 using UnityEngine;
 
 namespace ThrowEverything.Patches
@@ -14,11 +10,19 @@ namespace ThrowEverything.Patches
     {
         [HarmonyPostfix]
         [HarmonyPatch(typeof(PlayerControllerB), "Update")]
-        static void Update(PlayerControllerB __instance)
+        private static void Update(PlayerControllerB __instance)
         {
             if (!__instance.IsSelf()) return;
 
             ChargingThrow chargingThrow = State.GetChargingThrow();
+            if (Plugin.IgnoreStamina)
+            {
+                if (chargingThrow.isCharging)
+                {
+                    chargingThrow.DrawLandingCircle();
+                }
+                return;
+            }
             if (chargingThrow.isCharging)
             {
                 chargingThrow.DrawLandingCircle();
@@ -35,21 +39,17 @@ namespace ThrowEverything.Patches
 
             if (__instance.sprintMeter < 0.3f || __instance.isExhausted)
             {
-                if (!Plugin.IgnoreStamina)
-                {
-                    __instance.isExhausted = true;
-                    chargingThrow.Exhausted();
-                }
+                chargingThrow.Exhausted();
             }
             else
             {
-                chargingThrow.hasRunOutOfStamina = false;
+                chargingThrow.Reset();
             }
         }
 
         [HarmonyPrefix]
         [HarmonyPatch(typeof(PlayerControllerB), "ScrollMouse_performed")]
-        static void ScrollMouse_performed(PlayerControllerB __instance)
+        private static void ScrollMouse_performed(PlayerControllerB __instance)
         {
             if (!__instance.IsSelf()) return;
             if (State.GetChargingThrow().isCharging)

@@ -51,6 +51,16 @@ namespace ThrowEverything.Models
             }
         }
 
+        internal void Reset()
+        {
+            if (Plugin.IgnoreStamina) return;
+            if (!hasRunOutOfStamina)
+            {
+                hasRunOutOfStamina = false;
+            }
+        }
+
+
         private float GetTime()
         {
             if (hasRunOutOfStamina && !Plugin.IgnoreStamina)

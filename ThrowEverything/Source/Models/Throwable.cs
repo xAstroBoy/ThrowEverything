@@ -3,6 +3,7 @@ using GameNetcodeStuff;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using UnityEngine;
 using UnityEngine.InputSystem;
 using static UnityEngine.InputSystem.InputAction;
 
@@ -58,6 +59,17 @@ namespace ThrowEverything.Models
             float markiplier = Utils.ItemPower(HeldItem(), chargeDecimal);
             ThrownItem thrownItem = new(HeldItem(), HeldItem().playerHeldBy, chargeDecimal, markiplier);
             State.GetThrownItems().thrownItemsDict.Add(HeldItem().GetInstanceID(), thrownItem);
+            if (HeldItem() is RagdollGrabbableObject ragdoll)
+            {
+                Rigidbody rb = ragdoll.GetComponent<Rigidbody>();
+                if(rb != null)
+                {
+                    rb.isKinematic = true;
+                    Plugin.Logger.LogInfo($"Setting Thrown Body to be Kinematic");
+
+                }
+
+            }
 
             HeldItem().playerHeldBy.DiscardHeldObject(placeObject: true, null, Utils.GetItemThrowDestination(thrownItem));
         }

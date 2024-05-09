@@ -23,7 +23,7 @@ namespace ThrowEverything
             Mask.PlaceableShipObjects,
         };
 
-        internal static LayerMask TargetedCollisions => LayerCollision.ToLayerMask();
+        internal static LayerMask GroundCollisions => LayerCollision.ToLayerMask();
 
         internal static string Name(GrabbableObject item)
         {
@@ -72,7 +72,7 @@ namespace ThrowEverything
         internal static Vector3 FindLandingRay(Vector3 location, bool logging = false)
         {
             Ray landingRay = new(location, Vector3.down); // the ray of where the item will land (basically the location pointing down)
-            if (Physics.Raycast(landingRay, out RaycastHit hitInfo, 100f, TargetedCollisions))
+            if (Physics.Raycast(landingRay, out RaycastHit hitInfo, 100f, GroundCollisions))
             {
                 // if we collide with the floor then we return the collision spot elevated a bit
                 if (logging) Plugin.Logger.LogDebug("we hit the floor");
@@ -90,7 +90,7 @@ namespace ThrowEverything
             RaycastHit hitInfo; // where the ray collides
             float itemDistance = ItemPower(item, chargeDecimal, true) * 20;
             float distance;
-            if (Physics.Raycast(throwRay, out hitInfo, itemDistance, TargetedCollisions))
+            if (Physics.Raycast(throwRay, out hitInfo, itemDistance, GroundCollisions))
             {
                 // if we collide with a surface then we make the destination the collision
                 Plugin.Logger.LogDebug("we hit a surface");

@@ -24,6 +24,7 @@ namespace ThrowEverything.Models
             GrabbableObject item = thrownItem.GetItem();
             bool is_Key = item is KeyItem;
 
+
             if (item.reachedFloorTarget || thrownItem.IsPanicking())
             {
                 thrownItem.LandAndRemove();

@@ -84,6 +84,16 @@ namespace ThrowEverything.Models
             Plugin.Logger.LogInfo($"playing sound for {item.name} at markiplier {loudness}");
             RoundManager.Instance.PlayAudibleNoise(item.transform.position, Math.Clamp(loudness * 50, 8f, 50f), Math.Clamp(loudness, 0.5f, 1f), 0, item.isInElevator && StartOfRound.Instance.hangarDoorsClosed, 941);
             State.GetThrownItems().thrownItemsDict.Remove(item.GetInstanceID());
+            if (item is RagdollGrabbableObject ragdoll)
+            {
+                Rigidbody rb = ragdoll.GetComponent<Rigidbody>();
+                if (rb != null)
+                {
+                    Plugin.Logger.LogInfo($"Removing Thrown Body Kinematic property");
+                    rb.isKinematic = false;
+                }
+
+            }
             hittables.Clear();
             ColliderHit.Clear();
         }

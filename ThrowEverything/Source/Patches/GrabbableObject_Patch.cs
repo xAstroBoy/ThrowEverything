@@ -49,7 +49,14 @@ namespace ThrowEverything.Patches
         [HarmonyPatch(typeof(GrabbableObject), "SetControlTipsForItem")]
         static void SetControlTipsForItem(GrabbableObject __instance)
         {
-            ControlTips.Set(__instance);
+            if(__instance == null)
+            {
+                ControlTips.Clear();
+            }
+            else
+            {
+                ControlTips.Set(__instance);
+            }
         }
 
         [HarmonyPostfix]
