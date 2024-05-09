@@ -59,9 +59,9 @@ namespace ThrowEverything.Models
             float markiplier = Utils.ItemPower(HeldItem(), chargeDecimal);
             ThrownItem thrownItem = new(HeldItem(), HeldItem().playerHeldBy, chargeDecimal, markiplier);
             State.GetThrownItems().thrownItemsDict.Add(HeldItem().GetInstanceID(), thrownItem);
-            if (HeldItem() is RagdollGrabbableObject ragdoll)
+            if (HeldItem().GetComponent<RagdollGrabbableObject>() is RagdollGrabbableObject obj)
             {
-                Rigidbody rb = ragdoll.GetComponent<Rigidbody>();
+                Rigidbody rb = obj.GetComponent<Rigidbody>();
                 if(rb != null)
                 {
                     rb.isKinematic = true;

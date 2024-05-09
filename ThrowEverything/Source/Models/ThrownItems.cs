@@ -24,6 +24,12 @@ namespace ThrowEverything.Models
             GrabbableObject item = thrownItem.GetItem();
             bool is_Key = item is KeyItem;
 
+            Rigidbody body = item.GetGetInChildrens_OrParent<Rigidbody>(true);
+            // disable rigidbody to make sure it won't affect the item during the toss.
+            if(body != null)
+            {
+                body.isKinematic = true;
+            }
 
             if (item.reachedFloorTarget || thrownItem.IsPanicking())
             {
@@ -32,7 +38,7 @@ namespace ThrowEverything.Models
             }
 
             float size = Utils.ItemScale(item) * 2;
-            var colliders = item.transform.SphereCastFromCenter(size, 10f, TargetedCollisions);
+            var colliders = item.transform.SphereCastFromCenter(size, 2f, TargetedCollisions);
             foreach (RaycastHit hit in colliders)
             {
                 string name = hit.collider.name;
@@ -102,6 +108,11 @@ namespace ThrowEverything.Models
                     Utils.LocalPlayer.currentlyHeldObjectServer = item;
                     depositItemsDesk.PlaceItemOnCounter(Utils.LocalPlayer);
                     Utils.LocalPlayer.carryWeight -= item.itemProperties.weight;
+                    if (body != null)
+                    {
+                        body.isKinematic = false;
+                        Plugin.Logger.LogInfo($"Setting Thrown Body to no longer be Kinematic");
+                    }
                     break; // since we are launching the item to the desk, we don't want to drop it to the floor
                 }
 
@@ -109,6 +120,11 @@ namespace ThrowEverything.Models
                 item.startFallingPosition = item.transform.localPosition;
                 item.FallToGround();
                 thrownItem.LandAndRemove();
+                if (body != null)
+                {
+                    body.isKinematic = false;
+                    Plugin.Logger.LogInfo($"Setting Thrown Body to no longer be Kinematic");
+                }
                 break;
             }
         }
