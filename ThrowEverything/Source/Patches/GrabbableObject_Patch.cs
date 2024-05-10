@@ -15,13 +15,21 @@ namespace ThrowEverything.Patches
         [HarmonyPatch(typeof(GrabbableObject), "EquipItem")]
         static void EquipItem(GrabbableObject __instance)
         {
-            if (__instance.IsOwner)
+            if (__instance == null)
             {
-                Plugin.Logger.LogInfo($"equipped {Utils.Name(__instance)}");
-
-                State.ClearHeldThrowable();
+                ControlTips.Clear();
+                return;
+            }
+            else
+            {
+                if (__instance.IsOwner)
+                {
+                    Plugin.Logger.LogInfo($"equipped {Utils.Name(__instance)}");
+                    State.ClearHeldThrowable();
+                }
             }
         }
+    
 
         [HarmonyPostfix]
         [HarmonyPatch(typeof(GrabbableObject), "PocketItem")]
