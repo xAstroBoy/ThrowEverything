@@ -36,16 +36,15 @@ namespace ThrowEverything
         {
             if (IgnoreWeight) return 0;
             if (item == null) return 0;
-            float ow = item.itemProperties.weight;
-            float t = item.itemProperties.twoHanded ? 2 : 1;
-            float w = Math.Clamp((ow - 1) * t, 0, 1);
-            return w;
+            float Weight = item.itemProperties.weight - 1;
+            float TwoHanded = item.itemProperties.twoHanded ? 2 : 1;
+            return Math.Clamp(Weight * TwoHanded, 0, 1);
         }
 
 
-        internal static float ItemPower(GrabbableObject item, float powerDecimal, bool inverse = false)
+        internal static float ItemPower(GrabbableObject item, float powerDecimal, bool inverse = false, bool IgnoreWeight = false)
         {
-            float w = ItemWeight(item, Plugin.IgnoreWeight);
+            float w = ItemWeight(item, IgnoreWeight);
             float v;
             if (inverse) v = (1 - w) * (1 - w);
             else v = w * w;
@@ -88,7 +87,7 @@ namespace ThrowEverything
         {
             Ray throwRay = new(thrower.gameplayCamera.transform.position, thrower.gameplayCamera.transform.forward); // a ray from in front of the player
             RaycastHit hitInfo; // where the ray collides
-            float itemDistance = ItemPower(item, chargeDecimal, true) * 20;
+            float itemDistance = ItemPower(item, chargeDecimal, true, Plugin.IgnoreWeight) * 20;
             float distance;
             if (Physics.Raycast(throwRay, out hitInfo, itemDistance, GroundCollisions))
             {
@@ -98,7 +97,7 @@ namespace ThrowEverything
             }
             else
             {
-                // if we don't then we go the full length
+                // if we don'TwoHanded then we go the full length
                 Plugin.Logger.LogDebug("we did not hit a surface");
                 distance = itemDistance;
 

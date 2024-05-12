@@ -56,6 +56,10 @@ namespace ThrowEverything.Patches
             {
                 __instance.isGrabbingObjectAnimation = false; // put it back (hopefully to the way it was)
             }
+            if (__instance.currentlyHeldObjectServer == null)
+            {
+                ControlTips.Clear();
+            }
         }
     }
 }

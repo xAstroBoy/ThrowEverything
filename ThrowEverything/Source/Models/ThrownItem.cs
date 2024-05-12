@@ -8,21 +8,21 @@ namespace ThrowEverything.Models
 {
     internal class ThrownItem
     {
-        readonly GrabbableObject item;
-        readonly PlayerControllerB thrower; // this was funny as fuck at like 1am
-        readonly float chargeDecimal;
-        readonly float markiplier; // same here (markiplier = multiplier = power * charge)
-        
-        readonly DateTime thrownAt;
-        readonly HashSet<Collider> ColliderHit = [];
-        readonly HashSet<IHittable> hittables = [];
+        internal readonly GrabbableObject item;
+        internal readonly PlayerControllerB thrower; // this was funny as fuck at like 1am
+        internal readonly float chargeDecimal;
+        internal readonly float markiplier; // same here (markiplier = multiplier = power * charge)
+        internal readonly Rigidbody rigidbody;
+        internal readonly DateTime thrownAt;
+        internal readonly HashSet<Collider> ColliderHit = [];
+        internal readonly HashSet<IHittable> hittables = [];
         internal ThrownItem(GrabbableObject item, PlayerControllerB thrower, float chargeDecimal, float markiplier)
         {
             this.item = item;
             this.thrower = thrower;
             this.chargeDecimal = chargeDecimal;
             this.markiplier = markiplier;
-
+            this.rigidbody = item.transform.GetGetInChildrens_OrParent<Rigidbody>();
             thrownAt = DateTime.Now;
         }
 
@@ -84,13 +84,6 @@ namespace ThrowEverything.Models
             Plugin.Logger.LogInfo($"playing sound for {item.name} at markiplier {loudness}");
             RoundManager.Instance.PlayAudibleNoise(item.transform.position, Math.Clamp(loudness * 50, 8f, 50f), Math.Clamp(loudness, 0.5f, 1f), 0, item.isInElevator && StartOfRound.Instance.hangarDoorsClosed, 941);
             State.GetThrownItems().thrownItemsDict.Remove(item.GetInstanceID());
-            Rigidbody rb = item.GetGetInChildrens_OrParent<Rigidbody>(true);
-            if (rb != null)
-            {
-                rb.isKinematic = false;
-                Plugin.Logger.LogInfo($"Thrown Body should no longer be Kinematic");
-
-            }
             hittables.Clear();
             ColliderHit.Clear();
         }

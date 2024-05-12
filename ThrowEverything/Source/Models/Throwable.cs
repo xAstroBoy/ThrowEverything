@@ -56,17 +56,16 @@ namespace ThrowEverything.Models
             }
 
             float chargeDecimal = chargingThrow.GetChargeDecimal();
-            float markiplier = Utils.ItemPower(HeldItem(), chargeDecimal);
+            float markiplier = Utils.ItemPower(HeldItem(), chargeDecimal, false);
             ThrownItem thrownItem = new(HeldItem(), HeldItem().playerHeldBy, chargeDecimal, markiplier);
             State.GetThrownItems().thrownItemsDict.Add(HeldItem().GetInstanceID(), thrownItem);
-            Rigidbody rb = HeldItem().GetGetInChildrens_OrParent<Rigidbody>(true);
-            if (rb != null)
+            Rigidbody heldRigidbody = thrownItem.rigidbody;
+            if (heldRigidbody != null)
             {
-                rb.isKinematic = true;
-                Plugin.Logger.LogInfo($"Setting Thrown Body to be Kinematic");
-
+                Vector3 throwDirection = Utils.GetItemThrowDestination(thrownItem) - heldRigidbody.position;
+                Vector3 throwForce = throwDirection.normalized * markiplier;
+                heldRigidbody.AddForce(throwForce, ForceMode.Impulse);
             }
-
             HeldItem().playerHeldBy.DiscardHeldObject(placeObject: true, null, Utils.GetItemThrowDestination(thrownItem));
         }
 

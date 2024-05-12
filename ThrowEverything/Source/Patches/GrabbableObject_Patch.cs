@@ -26,6 +26,7 @@ namespace ThrowEverything.Patches
                 {
                     Plugin.Logger.LogInfo($"equipped {Utils.Name(__instance)}");
                     State.ClearHeldThrowable();
+                    State.GetThrownItems().thrownItemsDict.Remove(__instance.GetInstanceID());
                 }
             }
         }
@@ -39,6 +40,7 @@ namespace ThrowEverything.Patches
             {
                 Plugin.Logger.LogInfo($"pocketed {Utils.Name(__instance)}");
                 State.ClearHeldThrowable();
+                State.GetThrownItems().thrownItemsDict.Remove(__instance.GetInstanceID());
             }
         }
 
@@ -50,6 +52,7 @@ namespace ThrowEverything.Patches
             {
                 Plugin.Logger.LogInfo($"discarded {Utils.Name(__instance)}");
                 State.ClearHeldThrowable();
+                ControlTips.Clear();
             }
         }
 

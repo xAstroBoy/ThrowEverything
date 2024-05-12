@@ -16,6 +16,7 @@ namespace ThrowEverything
         internal static new BepInEx.Logging.ManualLogSource Logger;
         internal static ConfigEntry<bool> IgnoreWeightSetting;
         internal static ConfigEntry<bool> IgnoreStaminaSetting;
+        internal static ConfigEntry<bool> DamageByWeightSetting;
 
         private void Awake()
         {
@@ -40,6 +41,7 @@ namespace ThrowEverything
 
             IgnoreStaminaSetting = Config.Bind("Settings", "Ignore Stamina", false, "Whether to ignore stamina when throwing objects");
             IgnoreWeightSetting = Config.Bind("Settings", "Ignore Weight", false, "Whether to ignore weight when throwing objects");
+            DamageByWeightSetting = Config.Bind("Settings", "Damage by Weight", false, "Whether to damage by weight when throwing objects, or vanilla ThrowEverything logic");
             IgnoreStaminaSetting.SettingChanged += (obj, args) =>
             {
                 IgnoreStamina = IgnoreStaminaSetting.Value;
@@ -51,13 +53,22 @@ namespace ThrowEverything
                 Logger.LogInfo($"Ignore Weight: {IgnoreWeight}");
             };
 
+            DamageByWeightSetting.SettingChanged += (obj, args) =>
+            {
+                DamageByWeight = DamageByWeightSetting.Value;
+                Logger.LogInfo($"Damage by Weight: {DamageByWeightSetting}");
+            };
+
+
             IgnoreStamina = IgnoreStaminaSetting.Value;
             IgnoreWeight = IgnoreWeightSetting.Value;
+            DamageByWeight = DamageByWeightSetting.Value;
 
         }
 
         // Settings
         internal static bool IgnoreStamina { get; set; } = false;
         internal static bool IgnoreWeight { get; set; } = false;
+        internal static bool DamageByWeight { get; set; } = false;
     }
 }

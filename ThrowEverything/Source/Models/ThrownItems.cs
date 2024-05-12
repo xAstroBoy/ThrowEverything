@@ -203,7 +203,7 @@ namespace ThrowEverything.Models
                 return;
             }
 
-            int Damage = GetPlayerDamage(item, Plugin.IgnoreWeight);
+            int Damage = GetPlayerDamage(item, Plugin.DamageByWeight);
             Plugin.Logger.LogInfo($"damaging a player {Damage} ({player.health}");
             Utils.DamagePlayer(player, Damage, item.GetItem().transform.forward, item.GetThrower());
 
@@ -220,17 +220,17 @@ namespace ThrowEverything.Models
             if (generic == null) return;
             if (generic.HasAlreadyHit(item)) return;
 
-            int Damage = GetDamage(item, Plugin.IgnoreWeight);
+            int Damage = GetDamage(item, Plugin.DamageByWeight);
             Plugin.Logger.LogInfo($"damaging a {generic.GetType().Name} with {Damage}");
             generic.Hit(Damage, item.GetItem().transform.forward, item.GetThrower(), true, -1);
         }
 
-        private int GetPlayerDamage(ThrownItem item, bool ignoreWeight)
+        private int GetPlayerDamage(ThrownItem item, bool DamageByWeight)
         {
             if (item == null) return 0;
             float markiplier = item.GetMarkiplier();
             int damage;
-            if (!ignoreWeight)
+            if (!DamageByWeight)
             {
                 damage = (int)Math.Round(markiplier * 100);
             }
@@ -241,12 +241,12 @@ namespace ThrowEverything.Models
             return damage;
         }
 
-        private int GetDamage(ThrownItem item, bool ignoreWeight)
+        private int GetDamage(ThrownItem item, bool DamageByWeight)
         {
             if (item == null) return 0;
             float markiplier = item.GetMarkiplier();
             int damage;
-            if (!ignoreWeight)
+            if (!DamageByWeight)
             {
                 damage = (int)Math.Round(markiplier * 10);
             }
