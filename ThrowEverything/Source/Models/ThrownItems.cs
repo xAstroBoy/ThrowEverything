@@ -1,6 +1,7 @@
 ﻿using GameNetcodeStuff;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using UnityEngine;
 
 namespace ThrowEverything.Models
@@ -23,7 +24,6 @@ namespace ThrowEverything.Models
         {
             GrabbableObject item = thrownItem.GetItem();
             bool is_Key = item is KeyItem;
-
 
             if (item.reachedFloorTarget || thrownItem.IsPanicking())
             {
@@ -71,6 +71,7 @@ namespace ThrowEverything.Models
                         HandleTurret(thrownItem, Turret);
                         continue;
                     }
+
                     if (hittable is SpikeRoofTrap Spike)
                     {
                         HandleSpike(thrownItem, Spike);
@@ -96,6 +97,13 @@ namespace ThrowEverything.Models
                     HandleSpike(thrownItem, spike);
                     continue;
                 }
+
+                if (hit.transform.TryGetComponent(out TerminalAccessibleObject door))
+                {
+                    HandleDoor(thrownItem, door);
+                    continue;
+                }
+
                 if (hit.transform.TryGetComponent(out DepositItemsDesk depositItemsDesk))
                 {
                     Plugin.Logger.LogInfo("hitting a deposit desk");
@@ -123,7 +131,7 @@ namespace ThrowEverything.Models
             if (mine.isLandmineActive())
             {
                 Plugin.Logger.LogInfo("BOOM!");
-                mine.TriggerMine();
+                mine.Explode();
             }
         }
 
@@ -139,12 +147,12 @@ namespace ThrowEverything.Models
                 if (turret.isTurretActive())
                 {
                     Plugin.Logger.LogInfo("Berserk Mode!");
-                    turret.BerserkMode();
+                    turret.Berserk();
                 }
             }
             else
             {
-                turret.ToggleTurret();
+                turret.ToggleTurret(true);
                 string state = turret.isTurretActive() ? "On" : "Off";
                 Plugin.Logger.LogInfo($"Turning turret {state}");
             }
@@ -165,9 +173,23 @@ namespace ThrowEverything.Models
             }
             else
             {
-                spike.ToggleSpikes();
+                spike.ToggleSpikes(true);
                 string state = spike.isTrapActive() ? "On" : "Off";
                 Plugin.Logger.LogInfo($"Turning Spike {state}");
+            }
+        }
+
+        private void HandleDoor(ThrownItem item, TerminalAccessibleObject door)
+        {
+            if (item == null) return;
+            if (door == null) return;
+            if (!door.isBigDoor) return;
+            bool is_Key = item.GetItem() is KeyItem;
+            if (is_Key)
+            {
+                door.ToggleDoor();
+                string state = door.isDoorOpen() ? "Open" : "Closed";
+                Plugin.Logger.LogInfo($"Setting Door {state}");
             }
         }
 
